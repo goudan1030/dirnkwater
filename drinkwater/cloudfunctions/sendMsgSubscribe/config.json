@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "openapi": ["subscribeMessage.send"]
+  },
+  "triggers": [
+    {
+      "name": "sendCourseTimer",
+      "type": "timer",
+      "config": "0 38 9 * * * *"
+    }
+  ]
+}

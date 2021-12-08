@@ -1,0 +1,69 @@
+<view class="contaner">
+  <view class="page">
+    <view class="reflash" bindtap="reflash">
+      <image  src="/static/reflash.png" class="reflashbg"></image>
+    </view>
+    <view class="clear" bindtap="clear">
+      <image src="/static/clear.png" class="clearbg"></image>
+    </view>
+  <navigator url="/pages/mine/mine"  hover-class="navigator-hover" class="user">
+    <image wx:if="{{login==true}}" src="{{userInfo.avatarUrl}}" class="userbg"></image>
+    <image wx:if="{{login==false}}" src="/static/user2.png" class="userbg"></image>
+  </navigator>
+  <view class="box1">
+    <view class="box1-1">
+      <view class="title">每日目标</view>
+      <view class="info">1500ml</view>
+    </view>
+    <view class="box1-2">
+      <view class="title">今天已喝</view>
+      <view class="info">{{fromData[0].water}}ml</view>
+    </view>
+        <view class="box1-3">
+      <view class="title">下次提醒</view>
+      <view class="info">14:25</view>
+    </view>
+  </view>
+  <view class="row">
+    <image src="/static/bg.png" class="bg"></image>
+    <view class="textbox">
+      <view class="title-row">今天已经咕咚了</view>
+      <view class="info-row">{{fromData[0].water}}ml</view>
+    </view>
+  </view>
+  <view class="box2">
+    <view class="box2-1" bindtap="getDrink1">
+      <view class="brow">
+        <view class="row1">
+          <image src="/static/250.png" class="icon" ></image>
+        </view>
+      </view>
+      <view class="rowinfo">250ml</view>
+    </view>
+    <view class="box2-2" bindtap="getDrink2">
+      <view class="brow">
+        <view class="row1">
+          <image src="/static/350.png" class="icon" ></image>
+        </view>
+      </view>
+      <view class="rowinfo">350ml</view>
+    </view>
+    <view class="box2-3" bindtap="getDrink3">
+      <view class="brow">
+        <view class="row1">
+          <image src="/static/500.png" class="icon" ></image>
+        </view>
+      </view>
+      <view class="rowinfo">500ml</view>
+    </view>
+    <view class="box2-4" bindtap="getDrink4">
+      <view class="brow">
+        <view class="row1">
+          <image src="/static/1000.png" class="icon"></image>
+        </view>
+      </view>
+      <view class="rowinfo">1000ml</view>
+    </view>
+  </view>
+</view>
+</view>
