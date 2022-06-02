@@ -7,7 +7,21 @@ https://www.minifans.cn/
 
 ![image](https://user-images.githubusercontent.com/72783438/145314689-7859a7e4-94c5-4ae8-ae24-34247c37dcb1.png)
 
+<!-- wp:paragraph -->
+<p>-------------[2022.06.02 更新]-------</p>
+<!-- /wp:paragraph -->
 
+<!-- wp:paragraph -->
+<p>1.新增喝水闹钟功能，用户可以自由添加闹钟提醒；</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>2.修复了订阅消息推送时间不准确的问题；</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>3.修改了闹钟时间排序的问题；</p>
+<!-- /wp:paragraph -->
 采用云开发
 
 # 安装方法
