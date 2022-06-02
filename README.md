@@ -8,7 +8,8 @@ https://www.minifans.cn/
 ![image](https://user-images.githubusercontent.com/72783438/145314689-7859a7e4-94c5-4ae8-ae24-34247c37dcb1.png)
 
 <!-- wp:paragraph -->
-<p>-------------[2022.06.02 更新]-------</p>
+#<p>-------------[2022.06.02 更新]-------</p>
+新版本请扫描上面的二维码进行体验，完整版为收费版本，99元/份，站长QQ：10758029
 <!-- /wp:paragraph -->
 
 <!-- wp:paragraph -->
