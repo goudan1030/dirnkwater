@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const { WaterRecord } = require('../models/WaterRecord')
+const { WaterRecord } = require('../models/User')
 const { authenticateToken } = require('../utils/jwt')
 
 /**
