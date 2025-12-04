@@ -1,6 +1,7 @@
 const SUBSCRIBE_ID = 'pT3MZV9Z7N0wYpTCFLMJaWbNxE7u44wAsD0N-H3jHlU'  // 下发的模板ID
 const app = getApp()
-const db = wx.cloud.database()
+const config = require('../../config.js')
+
 Page({
 
   /**
@@ -23,134 +24,175 @@ Page({
    */
   onLoad: function (options) {
     const userInfo = wx.getStorageSync('user')
-    // const userInfo = app.globalData.userInfo
-    let login = app.globalData.login
+    let login = app.globalData.login || false
     if (wx.getUserProfile) {
       this.setData({
         canIUseGetUserProfile: true,
-        userInfo:userInfo,
-        login:login
+        userInfo: userInfo || this.data.userInfo,
+        login: login
       })
     }
   },
-   /**
+
+  /**
    * 获取用户登录信息
    */
-getUserProfile(){
-  var that = this;
-  let userInfo = that.data.userInfo
-  wx.getUserProfile({
-    desc: '用于完善会员资料', // 声明获取用户个人信息后的用途，后续会展示在弹窗中，请谨慎填写
-    success: (res) => {
-      console.log('用户资料',res.userInfo);
-      this.setData({
-        userInfo : res.userInfo,
-        login:true
-      })
-      wx.setStorageSync('user', res.userInfo)
-      db.collection('user').where({
-        nickName:res.userInfo.nickName
-      }).get({
-        success:res=>{
-          if(res.data.length == 0){
-            var userInfo = that.data.userInfo
-            db.collection('user').add({
-              data:{
-                nickName: userInfo.nickName,
-                avatarUrl: userInfo.avatarUrl,
-                time: new Date(),
-                water:0
+  getUserProfile(){
+    const that = this
+    wx.getUserProfile({
+      desc: '用于完善会员资料',
+      success: (res) => {
+        console.log('用户资料', res.userInfo)
+        const userInfo = res.userInfo
+        this.setData({
+          userInfo: userInfo,
+          login: true,
+          avatarUrl: userInfo.avatarUrl,
+          hasUserInfo: true
+        })
+        wx.setStorageSync('user', userInfo)
+        app.globalData.userInfo = userInfo
+        app.globalData.login = true
 
-              },success:res=>{
+        // 同步用户信息到服务器
+        const token = app.globalData.token || wx.getStorageSync('token')
+        if (token) {
+          wx.request({
+            url: config.baseURL + config.api.updateProfile,
+            method: 'POST',
+            header: {
+              'Authorization': 'Bearer ' + token
+            },
+            data: {
+              nickName: userInfo.nickName,
+              avatarUrl: userInfo.avatarUrl
+            },
+            success: (result) => {
+              if (result.data && result.data.code === 0) {
                 wx.showToast({
                   title: '登录成功',
-                  icon:'success'
+                  icon: 'success'
                 })
-                console.log('用户信息已经保存到数据库',res);
-              },fail:err=>{
-                console.log('用户信息保存失败！',err);
+                console.log('用户信息已同步到服务器')
+              } else {
+                console.error('同步用户信息失败:', result.data)
               }
-            })
-          }else{
-            console.log('已经记录过！');
-          }
+            },
+            fail: (err) => {
+              console.error('同步用户信息请求失败:', err)
+            }
+          })
+        } else {
+          // 如果没有 token，先尝试登录
+          app.doLogin()
+          wx.showToast({
+            title: '登录成功',
+            icon: 'success'
+          })
         }
-      })
-      console.log(res.userInfo);
-      this.setData({
-        userInfo: res.userInfo,
-        avatarUrl:res.userInfo.avatarUrl,
-        hasUserInfo: true
-      })
-    }
-  })
-},
+      },
+      fail: (err) => {
+        console.error('获取用户信息失败:', err)
+      }
+    })
+  },
+
   /**
    * 用户订阅消息
    */
   sub(e){
-        // 获取课程相关信息
-        wx.requestSubscribeMessage({
-          tmplIds: [SUBSCRIBE_ID],
-          success(res) {
-            if (res[SUBSCRIBE_ID] === 'accept') {
-              // 调用云函数subscribe
-              wx.cloud
-                .callFunction({
-                  name: 'addMsg',
-                  data: {
-                    
-                    templateId: SUBSCRIBE_ID,
-                  },
-                })
-                .then(() => {
+    // 获取课程相关信息
+    wx.requestSubscribeMessage({
+      tmplIds: [SUBSCRIBE_ID],
+      success(res) {
+        if (res[SUBSCRIBE_ID] === 'accept') {
+          // 订阅成功，可以调用后端接口保存订阅信息
+          const token = app.globalData.token || wx.getStorageSync('token')
+          if (token) {
+            wx.request({
+              url: config.baseURL + '/subscribe/add',
+              method: 'POST',
+              header: {
+                'Authorization': 'Bearer ' + token
+              },
+              data: {
+                templateId: SUBSCRIBE_ID
+              },
+              success: (result) => {
+                if (result.data && result.data.code === 0) {
                   wx.showToast({
                     title: '订阅成功',
                     icon: 'success'
-                  });
-                })
-                .catch(() => {
-                  // dothing...
-                });
-            }
-          },
-        });
+                  })
+                }
+              },
+              fail: (err) => {
+                console.error('保存订阅信息失败:', err)
+              }
+            })
+          } else {
+            wx.showToast({
+              title: '订阅成功',
+              icon: 'success'
+            })
+          }
+        }
+      },
+      fail: (err) => {
+        console.error('订阅失败:', err)
+      }
+    })
   },
-   //发送消息
-   sendSubscribeMessage(e) {
-    //调用云函数，
-    wx.cloud.callFunction({
-      name: 'sendMsgSubscribe',
-      //data是用来传给云函数event的数据，你可以把你当前页面获取消息填写到服务通知里面
-      data: {
-        action: 'sendSubscribeMessage',
-        templateId: 'pT3MZV9Z7N0wYpTCFLMJaWbNxE7u44wAsD0N-H3jHlU',//这里我就直接把模板ID传给云函数了
 
-        _openid:''//填入自己的openid
+  /**
+   * 发送消息（测试用，实际应该由后端定时任务发送）
+   */
+  sendSubscribeMessage(e) {
+    const token = app.globalData.token || wx.getStorageSync('token')
+    if (!token) {
+      wx.showToast({
+        title: '请先登录',
+        icon: 'none'
+      })
+      return
+    }
+
+    wx.request({
+      url: config.baseURL + '/subscribe/send',
+      method: 'POST',
+      header: {
+        'Authorization': 'Bearer ' + token
       },
-      success: res => {
-        console.warn('[云函数] [openapi] subscribeMessage.send 调用成功：', res)
-        wx.showModal({
-          title: '发送成功',
-          content: '请返回微信主界面查看',
-          showCancel: false,
-        })
-        wx.showToast({
-          title: '发送成功，请返回微信主界面查看',
-        })
-        this.setData({
-          subscribeMessageResult: JSON.stringify(res.result)
-        })
+      data: {
+        templateId: SUBSCRIBE_ID
       },
-      fail: err => {
+      success: (res) => {
+        if (res.data && res.data.code === 0) {
+          wx.showModal({
+            title: '发送成功',
+            content: '请返回微信主界面查看',
+            showCancel: false,
+          })
+          wx.showToast({
+            title: '发送成功，请返回微信主界面查看',
+          })
+        } else {
+          wx.showToast({
+            title: res.data?.msg || '发送失败',
+            icon: 'none'
+          })
+        }
+      },
+      fail: (err) => {
         wx.showToast({
           icon: 'none',
           title: '调用失败',
         })
-        console.error('[云函数] [openapi] subscribeMessage.send 调用失败：', err)
+        console.error('发送订阅消息失败：', err)
       }
     })
   },
+
   /**
    * 生命周期函数--监听页面初次渲染完成
    */

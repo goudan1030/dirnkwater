@@ -17,7 +17,7 @@
     </view>
     <view class="box1-2">
       <view class="title">今天已喝</view>
-      <view class="info">{{fromData[0].water}}ml</view>
+      <view class="info">{{displayWater}}ml</view>
     </view>
         <view class="box1-3">
       <view class="title">下次提醒</view>
@@ -25,14 +25,17 @@
     </view>
   </view>
   <view class="row">
+    <view class="water-mask">
+      <view class="water-level" style="height: {{displayPercent}}%;"></view>
+    </view>
     <image src="/static/bg.png" class="bg"></image>
     <view class="textbox">
       <view class="title-row">今天已经咕咚了</view>
-      <view class="info-row">{{fromData[0].water}}ml</view>
+      <view class="info-row">{{displayWater}}ml</view>
     </view>
   </view>
   <view class="box2">
-    <view class="box2-1" bindtap="getDrink1">
+    <view class="box2-1" bindtap="getDrink1" hover-class="btn-hover">
       <view class="brow">
         <view class="row1">
           <image src="/static/250.png" class="icon" ></image>
@@ -40,7 +43,7 @@
       </view>
       <view class="rowinfo">250ml</view>
     </view>
-    <view class="box2-2" bindtap="getDrink2">
+    <view class="box2-2" bindtap="getDrink2" hover-class="btn-hover">
       <view class="brow">
         <view class="row1">
           <image src="/static/350.png" class="icon" ></image>
@@ -48,7 +51,7 @@
       </view>
       <view class="rowinfo">350ml</view>
     </view>
-    <view class="box2-3" bindtap="getDrink3">
+    <view class="box2-3" bindtap="getDrink3" hover-class="btn-hover">
       <view class="brow">
         <view class="row1">
           <image src="/static/500.png" class="icon" ></image>
@@ -56,7 +59,7 @@
       </view>
       <view class="rowinfo">500ml</view>
     </view>
-    <view class="box2-4" bindtap="getDrink4">
+    <view class="box2-4" bindtap="getDrink4" hover-class="btn-hover">
       <view class="brow">
         <view class="row1">
           <image src="/static/1000.png" class="icon"></image>

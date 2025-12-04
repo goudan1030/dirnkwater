@@ -141,6 +141,25 @@
   flex-direction: column;
   margin: 186rpx 0 0 130rpx;
 }
+.water-mask{
+  position:absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 100%;
+  overflow: hidden;
+  pointer-events: none;
+}
+.water-level{
+  position:absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  background-image: linear-gradient(#8ec5ff, #0052d9);
+  opacity: 0.16;
+  transition: height 400ms ease-out;
+}
 .textbox{
   width: 100%;
   margin-bottom: 100rpx;
@@ -168,10 +187,12 @@
   width: 100%;
   display: flex;
   margin: 224rpx 0 auto;
+  animation: fadeUp 400ms ease-out 120ms both;
 }
 .box2-1,.box2-2,.box2-3,.box2-4{
   height: 260rpx;
   width: 25%;
+  transition: transform 120ms ease-out;
 }
 .brow{
   display: flex;align-items: center;justify-content: center;
@@ -186,6 +207,9 @@
   border-radius: 100%;
   width: 146rpx;
   flex-direction: column;
+}
+.btn-hover{
+  transform: scale(0.94);
 }
 .rowinfo{
   z-index: 62;
@@ -214,4 +238,17 @@
   height: 86px;
   right: 40px;
   bottom: 22px;
+}
+@keyframes fadeUp{
+  from{
+    opacity: 0;
+    transform: translateY(40rpx);
+  }
+  to{
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.row{
+  animation: fadeUp 400ms ease-out both;
 }

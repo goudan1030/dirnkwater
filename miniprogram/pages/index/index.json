@@ -1,4 +1,6 @@
 {
   "usingComponents": {},
-  "navigationStyle": "custom"
+  "navigationStyle": "custom",
+  "renderer": "skyline",
+  "componentFramework": "glass-easel"
 }
