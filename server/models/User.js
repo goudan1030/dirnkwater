@@ -162,7 +162,17 @@ class WaterRecordModel {
       [recordId]
     )
     if (rows[0]) {
-      rows[0].records = rows[0].records ? JSON.parse(rows[0].records) : []
+      // 安全解析 JSON 字段
+      try {
+        if (rows[0].records && typeof rows[0].records === 'string' && rows[0].records.trim() !== '') {
+          rows[0].records = JSON.parse(rows[0].records)
+        } else {
+          rows[0].records = []
+        }
+      } catch (e) {
+        console.warn('解析 records JSON 失败，使用空数组:', e.message)
+        rows[0].records = []
+      }
     }
     return rows[0] || null
   }
@@ -175,8 +185,17 @@ class WaterRecordModel {
     if (!record) {
       record = await this.create(userId, date, 0, [])
     } else {
-      // 解析 JSON 字段
-      record.records = record.records ? JSON.parse(record.records) : []
+      // 解析 JSON 字段，安全处理空值和无效 JSON
+      try {
+        if (record.records && typeof record.records === 'string' && record.records.trim() !== '') {
+          record.records = JSON.parse(record.records)
+        } else {
+          record.records = []
+        }
+      } catch (e) {
+        console.warn('解析 records JSON 失败，使用空数组:', e.message)
+        record.records = []
+      }
     }
     return record
   }
@@ -199,11 +218,21 @@ class WaterRecordModel {
 
     const [rows] = await pool.execute(sql, params)
     
-    // 解析 JSON 字段
-    return rows.map(row => ({
-      ...row,
-      records: row.records ? JSON.parse(row.records) : []
-    }))
+    // 安全解析 JSON 字段
+    return rows.map(row => {
+      let records = []
+      try {
+        if (row.records && typeof row.records === 'string' && row.records.trim() !== '') {
+          records = JSON.parse(row.records)
+        }
+      } catch (e) {
+        console.warn('解析 records JSON 失败，使用空数组:', e.message)
+      }
+      return {
+        ...row,
+        records: records
+      }
+    })
   }
 }
 
