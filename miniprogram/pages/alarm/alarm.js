@@ -361,12 +361,7 @@ Page({
       icon: 'success'
     })
     
-    // 如果是新增，提示用户订阅消息
-    if (!isEdit) {
-      setTimeout(() => {
-        this.requestSubscribeMessage()
-      }, 1500)
-    }
+    // 注意：订阅消息授权必须在用户点击事件中触发，不能在这里异步调用
   },
 
   /**
