@@ -104,39 +104,51 @@ class AlarmModel {
     const existingAlarms = await this.findByUserId(userId)
     const existingIds = new Set(existingAlarms.map(a => a.id))
     
-    // 准备要保留的ID集合
-    const incomingIds = new Set()
-    const incomingDbIds = alarms.filter(a => a.id && typeof a.id === 'number').map(a => a.id)
+    // 区分数据库ID和时间戳ID
+    // 数据库ID通常是较小的整数（< 100000000），时间戳ID是很大的数字（> 1000000000）
+    const isDatabaseId = (id) => {
+      return id && typeof id === 'number' && id < 100000000
+    }
+    
+    // 提取数据库ID列表（排除时间戳ID）
+    const incomingDbIds = alarms
+      .filter(a => isDatabaseId(a.id))
+      .map(a => a.id)
+    
+    const keptIds = new Set()
     
     // 处理每个传入的闹钟
     for (const alarm of alarms) {
       const { time, repeat, message, enabled = true } = alarm
       
-      if (alarm.id && typeof alarm.id === 'number' && existingIds.has(alarm.id)) {
-        // 更新现有闹钟
+      if (isDatabaseId(alarm.id) && existingIds.has(alarm.id)) {
+        // 更新现有闹钟（数据库ID且存在）
         await pool.execute(
           `UPDATE alarms SET 
            time = ?, repeat = ?, message = ?, enabled = ?, deleted = 0, updatedAt = NOW()
            WHERE id = ? AND userId = ?`,
           [time, repeat, message || '该喝水啦！', enabled ? 1 : 0, alarm.id, userId]
         )
-        incomingIds.add(alarm.id)
+        keptIds.add(alarm.id)
       } else {
-        // 创建新闹钟
-        await this.create(userId, { time, repeat, message, enabled })
+        // 创建新闹钟（时间戳ID或不存在于数据库的ID）
+        const newAlarm = await this.create(userId, { time, repeat, message, enabled })
+        if (newAlarm && newAlarm.id) {
+          keptIds.add(newAlarm.id)
+        }
       }
     }
     
     // 删除不在新列表中的闹钟（软删除）
-    if (incomingDbIds.length > 0) {
-      const placeholders = incomingDbIds.map(() => '?').join(',')
+    if (keptIds.size > 0) {
+      const placeholders = Array.from(keptIds).map(() => '?').join(',')
       await pool.execute(
         `UPDATE alarms SET deleted = 1, updatedAt = NOW() 
          WHERE userId = ? AND id NOT IN (${placeholders})`,
-        [userId, ...incomingDbIds]
+        [userId, ...Array.from(keptIds)]
       )
-    } else {
-      // 如果没有传入任何现有ID，标记所有为删除
+    } else if (alarms.length === 0) {
+      // 只有当传入列表为空时，才删除所有闹钟
       await pool.execute(
         'UPDATE alarms SET deleted = 1, updatedAt = NOW() WHERE userId = ?',
         [userId]
