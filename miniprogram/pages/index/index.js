@@ -16,6 +16,8 @@ Page({
     userInfo: {
       avatarUrl:"/static/user2.png"
     },
+    nextAlarmTime: '', // 下次提醒时间
+    hasAlarm: false, // 是否有设置闹钟
   },
 
   /**
@@ -36,6 +38,9 @@ Page({
         login: login
       })
     }
+    
+    // 更新下一个闹钟时间
+    this.updateNextAlarm()
   },
 
   /**
@@ -343,6 +348,8 @@ Page({
   onShow: function () {
     // 页面显示时刷新数据
     this.loadTodayWater()
+    // 更新下一个闹钟时间（闹钟可能被修改了）
+    this.updateNextAlarm()
   },
 
   /**
@@ -403,5 +410,163 @@ Page({
       // imageUrl:'/static/'
       // query: 'kjbfrom=pyq'
     }
+  },
+
+  /**
+   * 跳转到闹钟管理页面
+   */
+  goToAlarm: function() {
+    wx.navigateTo({
+      url: '/pages/alarm/alarm'
+    })
+  },
+
+  /**
+   * 更新下一个闹钟时间
+   */
+  updateNextAlarm: function() {
+    const token = app.globalData.token || wx.getStorageSync('token')
+    
+    // 如果已登录，从服务器加载闹钟
+    if (token) {
+      wx.request({
+        url: config.baseURL + config.api.alarmList,
+        method: 'GET',
+        header: {
+          'Authorization': 'Bearer ' + token
+        },
+        success: (res) => {
+          if (res.data && res.data.code === 0) {
+            const alarms = res.data.data || []
+            this.processAlarmsForNext(alarms)
+          } else {
+            // 服务器加载失败，使用本地数据
+            this.loadAlarmsFromLocal()
+          }
+        },
+        fail: (err) => {
+          console.error('加载闹钟列表失败:', err)
+          // 使用本地数据
+          this.loadAlarmsFromLocal()
+        }
+      })
+    } else {
+      // 未登录，使用本地数据
+      this.loadAlarmsFromLocal()
+    }
+  },
+
+  /**
+   * 从本地加载闹钟数据
+   */
+  loadAlarmsFromLocal: function() {
+    const alarms = wx.getStorageSync('alarms') || []
+    const globalAlarms = app.globalData.alarms || alarms
+    this.processAlarmsForNext(globalAlarms)
+  },
+
+  /**
+   * 处理闹钟数据并计算下一个时间
+   */
+  processAlarmsForNext: function(alarms) {
+    // 过滤出已启用的闹钟
+    const enabledAlarms = alarms.filter(alarm => alarm.enabled !== false)
+    
+    if (enabledAlarms.length === 0) {
+      this.setData({
+        nextAlarmTime: '',
+        hasAlarm: false
+      })
+      return
+    }
+    
+    // 计算下一个闹钟时间
+    const nextAlarm = this.getNextAlarmTime(enabledAlarms)
+    
+    if (nextAlarm) {
+      this.setData({
+        nextAlarmTime: nextAlarm.time,
+        hasAlarm: true
+      })
+    } else {
+      this.setData({
+        nextAlarmTime: '',
+        hasAlarm: false
+      })
+    }
+  },
+
+  /**
+   * 计算下一个闹钟时间
+   */
+  getNextAlarmTime: function(alarms) {
+    const now = new Date()
+    const currentHour = now.getHours()
+    const currentMinute = now.getMinutes()
+    const currentDay = now.getDay() // 0-6, 0=周日
+    const currentTimeMinutes = currentHour * 60 + currentMinute
+    
+    let nextAlarm = null
+    let minMinutes = Infinity
+    
+    alarms.forEach(alarm => {
+      if (!alarm.time) return
+      
+      const [hour, minute] = alarm.time.split(':').map(Number)
+      const alarmMinutes = hour * 60 + minute
+      
+      let shouldShow = false
+      let nextMinutes = 0
+      
+      if (alarm.repeat === 'daily') {
+        // 每天重复
+        if (alarmMinutes > currentTimeMinutes) {
+          // 今天还有这个时间
+          shouldShow = true
+          nextMinutes = alarmMinutes - currentTimeMinutes
+        } else {
+          // 今天已过，显示明天的
+          shouldShow = true
+          nextMinutes = 24 * 60 - currentTimeMinutes + alarmMinutes
+        }
+      } else if (alarm.repeat === 'weekday') {
+        // 工作日（周一到周五）
+        const isWeekday = currentDay >= 1 && currentDay <= 5
+        if (isWeekday && alarmMinutes > currentTimeMinutes) {
+          // 今天是工作日，且今天还有这个时间
+          shouldShow = true
+          nextMinutes = alarmMinutes - currentTimeMinutes
+        } else if (isWeekday && alarmMinutes <= currentTimeMinutes) {
+          // 今天是工作日，但时间已过，显示明天（如果明天是工作日）
+          shouldShow = true
+          nextMinutes = 24 * 60 - currentTimeMinutes + alarmMinutes
+        } else {
+          // 今天是周末，计算下一个工作日
+          let daysUntilNext = 0
+          if (currentDay === 0) {
+            // 周日，下一个工作日是周一（1天后）
+            daysUntilNext = 1
+          } else if (currentDay === 6) {
+            // 周六，下一个工作日是周一（2天后）
+            daysUntilNext = 2
+          }
+          shouldShow = true
+          nextMinutes = daysUntilNext * 24 * 60 - currentTimeMinutes + alarmMinutes
+        }
+      } else if (alarm.repeat === 'once') {
+        // 仅一次，只显示今天还未到的
+        if (alarmMinutes > currentTimeMinutes) {
+          shouldShow = true
+          nextMinutes = alarmMinutes - currentTimeMinutes
+        }
+      }
+      
+      if (shouldShow && nextMinutes < minMinutes) {
+        minMinutes = nextMinutes
+        nextAlarm = alarm
+      }
+    })
+    
+    return nextAlarm
   },
 })

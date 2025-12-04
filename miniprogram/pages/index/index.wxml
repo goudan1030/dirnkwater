@@ -19,9 +19,9 @@
       <view class="title">今天已喝</view>
       <view class="info">{{displayWater}}ml</view>
     </view>
-        <view class="box1-3">
+    <view class="box1-3" bindtap="goToAlarm" hover-class="box-hover">
       <view class="title">下次提醒</view>
-      <view class="info">14:25</view>
+      <view class="info {{!hasAlarm ? 'info-empty' : ''}}">{{hasAlarm ? nextAlarmTime : '未设置'}}</view>
     </view>
   </view>
   <view class="row">
