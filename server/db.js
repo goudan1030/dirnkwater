@@ -76,7 +76,7 @@ async function initTables() {
         id INT AUTO_INCREMENT PRIMARY KEY,
         userId INT NOT NULL,
         time VARCHAR(5) NOT NULL COMMENT '闹钟时间 HH:MM',
-        repeat VARCHAR(20) DEFAULT 'daily' COMMENT '重复类型: daily每天, weekday工作日, once仅一次',
+        \`repeat\` VARCHAR(20) DEFAULT 'daily' COMMENT '重复类型: daily每天, weekday工作日, once仅一次',
         message VARCHAR(200) DEFAULT '该喝水啦！' COMMENT '提醒内容',
         enabled TINYINT(1) DEFAULT 1 COMMENT '是否启用',
         lastSentDate DATE NULL COMMENT '最后发送日期（用于once类型）',
