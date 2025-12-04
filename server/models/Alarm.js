@@ -36,7 +36,7 @@ class AlarmModel {
     const { time, repeat, message, enabled = true } = data
     
     const [result] = await pool.execute(
-      `INSERT INTO alarms (userId, time, repeat, message, enabled) 
+      `INSERT INTO alarms (userId, time, \`repeat\`, message, enabled) 
        VALUES (?, ?, ?, ?, ?)`,
       [userId, time, repeat, message || '该喝水啦！', enabled ? 1 : 0]
     )
@@ -57,7 +57,7 @@ class AlarmModel {
       values.push(data.time)
     }
     if (data.repeat !== undefined) {
-      fields.push('repeat = ?')
+      fields.push('`repeat` = ?')
       values.push(data.repeat)
     }
     if (data.message !== undefined) {
@@ -125,7 +125,7 @@ class AlarmModel {
         // 更新现有闹钟（数据库ID且存在）
         await pool.execute(
           `UPDATE alarms SET 
-           time = ?, repeat = ?, message = ?, enabled = ?, deleted = 0, updatedAt = NOW()
+           time = ?, \`repeat\` = ?, message = ?, enabled = ?, deleted = 0, updatedAt = NOW()
            WHERE id = ? AND userId = ?`,
           [time, repeat, message || '该喝水啦！', enabled ? 1 : 0, alarm.id, userId]
         )
@@ -185,9 +185,9 @@ class AlarmModel {
        AND a.deleted = 0
        AND a.time = ?
        AND (
-         a.repeat = 'daily'
-         OR (a.repeat = 'weekday' AND ? BETWEEN 1 AND 5)
-         OR (a.repeat = 'once' AND (a.lastSentDate IS NULL OR a.lastSentDate != ?))
+         a.\`repeat\` = 'daily'
+         OR (a.\`repeat\` = 'weekday' AND ? BETWEEN 1 AND 5)
+         OR (a.\`repeat\` = 'once' AND (a.lastSentDate IS NULL OR a.lastSentDate != ?))
        )`,
       [timeStr, currentDay, today]
     )
