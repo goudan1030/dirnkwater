@@ -70,6 +70,26 @@ async function initTables() {
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
     `)
 
+    // 创建 alarms 表
+    await pool.execute(`
+      CREATE TABLE IF NOT EXISTS alarms (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        userId INT NOT NULL,
+        time VARCHAR(5) NOT NULL COMMENT '闹钟时间 HH:MM',
+        repeat VARCHAR(20) DEFAULT 'daily' COMMENT '重复类型: daily每天, weekday工作日, once仅一次',
+        message VARCHAR(200) DEFAULT '该喝水啦！' COMMENT '提醒内容',
+        enabled TINYINT(1) DEFAULT 1 COMMENT '是否启用',
+        lastSentDate DATE NULL COMMENT '最后发送日期（用于once类型）',
+        deleted TINYINT(1) DEFAULT 0 COMMENT '是否删除',
+        createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        INDEX idx_userId (userId),
+        INDEX idx_time (time),
+        INDEX idx_enabled_time (enabled, time, deleted),
+        FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+    `)
+
     console.log('数据库表初始化完成')
   } catch (error) {
     console.error('初始化数据库表失败:', error)

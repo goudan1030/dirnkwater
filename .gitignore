@@ -1,0 +1,28 @@
+# 操作系统文件
+.DS_Store
+Thumbs.db
+
+# 环境变量文件（包含敏感信息）
+server/.env
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IDE 文件
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# 临时文件
+tmp/
+temp/
+*.zip
+
+# 小程序编译文件
+miniprogram/node_modules/
+

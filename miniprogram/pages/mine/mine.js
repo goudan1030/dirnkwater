@@ -1,4 +1,5 @@
-const SUBSCRIBE_ID = 'pT3MZV9Z7N0wYpTCFLMJaWbNxE7u44wAsD0N-H3jHlU'  // 下发的模板ID
+// 订阅消息模板ID
+const SUBSCRIBE_TEMPLATE_ID = 'vi7txiPzgsN4Oo-wM8iNRc8ePcOtNpSdmAwiFTHYADE'
 const app = getApp()
 const config = require('../../config.js')
 
@@ -98,54 +99,55 @@ Page({
   },
 
   /**
-   * 用户订阅消息
+   * 开启订阅消息
    */
   sub(e){
-    // 获取课程相关信息
+    // 请求用户授权订阅消息（根据微信官方文档：https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/subscribe-message.html）
     wx.requestSubscribeMessage({
-      tmplIds: [SUBSCRIBE_ID],
+      tmplIds: [SUBSCRIBE_TEMPLATE_ID],
       success(res) {
-        if (res[SUBSCRIBE_ID] === 'accept') {
+        if (res[SUBSCRIBE_TEMPLATE_ID] === 'accept') {
           // 订阅成功，可以调用后端接口保存订阅信息
           const token = app.globalData.token || wx.getStorageSync('token')
           if (token) {
             wx.request({
-              url: config.baseURL + '/subscribe/add',
+              url: config.baseURL + config.api.subscribeAdd,
               method: 'POST',
               header: {
                 'Authorization': 'Bearer ' + token
               },
               data: {
-                templateId: SUBSCRIBE_ID
+                templateId: SUBSCRIBE_TEMPLATE_ID
               },
               success: (result) => {
                 if (result.data && result.data.code === 0) {
                   wx.showToast({
-                    title: '订阅成功',
+                    title: '订阅消息开启成功',
                     icon: 'success'
                   })
                 }
               },
               fail: (err) => {
-                console.error('保存订阅信息失败:', err)
+                console.error('保存订阅消息信息失败:', err)
               }
             })
           } else {
             wx.showToast({
-              title: '订阅成功',
+              title: '订阅消息开启成功',
               icon: 'success'
             })
           }
         }
       },
       fail: (err) => {
-        console.error('订阅失败:', err)
+        console.error('开启订阅消息失败:', err)
       }
     })
   },
 
   /**
-   * 发送消息（测试用，实际应该由后端定时任务发送）
+   * 发送订阅消息（测试用，实际应该由后端定时任务发送）
+   * 参考文档：https://developers.weixin.qq.com/miniprogram/dev/OpenApiDoc/mp-message-management/subscribe-message/sendMessage.html
    */
   sendSubscribeMessage(e) {
     const token = app.globalData.token || wx.getStorageSync('token')
@@ -158,23 +160,23 @@ Page({
     }
 
     wx.request({
-      url: config.baseURL + '/subscribe/send',
+      url: config.baseURL + config.api.subscribeSend,
       method: 'POST',
       header: {
         'Authorization': 'Bearer ' + token
       },
       data: {
-        templateId: SUBSCRIBE_ID
+        templateId: SUBSCRIBE_TEMPLATE_ID
       },
       success: (res) => {
         if (res.data && res.data.code === 0) {
           wx.showModal({
             title: '发送成功',
-            content: '请返回微信主界面查看',
+            content: '请返回微信主界面查看订阅消息',
             showCancel: false,
           })
           wx.showToast({
-            title: '发送成功，请返回微信主界面查看',
+            title: '订阅消息已发送，请返回微信主界面查看',
           })
         } else {
           wx.showToast({
@@ -201,10 +203,88 @@ Page({
   },
 
   /**
+   * 返回上一页
+   */
+  goBack: function() {
+    wx.navigateBack()
+  },
+
+  /**
+   * 跳转到资料完善页面
+   */
+  goToProfile: function() {
+    if (!this.data.login) {
+      return
+    }
+    wx.navigateTo({
+      url: '/pages/profile/profile'
+    })
+  },
+
+  /**
+   * 跳转到闹钟管理页面
+   */
+  goToAlarm: function() {
+    wx.navigateTo({
+      url: '/pages/alarm/alarm'
+    })
+  },
+
+  /**
+   * 退出登录
+   */
+  logout: function() {
+    const that = this
+    wx.showModal({
+      title: '提示',
+      content: '确定要退出登录吗？',
+      cancelText: '取消',
+      confirmText: '确定',
+      success: function(res) {
+        if (res.confirm) {
+          // 清除本地存储
+          wx.removeStorageSync('user')
+          wx.removeStorageSync('token')
+          wx.removeStorageSync('userId')
+          
+          // 清除全局数据
+          app.globalData.userInfo = ''
+          app.globalData.token = ''
+          app.globalData.userId = ''
+          app.globalData.login = false
+          
+          // 更新页面数据
+          that.setData({
+            login: false,
+            userInfo: {
+              avatarUrl: "/static/user2.png",
+              nickName: '马上登录'
+            },
+            hasUserInfo: false
+          })
+          
+          wx.showToast({
+            title: '已退出登录',
+            icon: 'success'
+          })
+          
+          console.log('退出登录成功')
+        }
+      }
+    })
+  },
+
+  /**
    * 生命周期函数--监听页面显示
    */
   onShow: function () {
-
+    // 页面显示时刷新登录状态
+    const userInfo = wx.getStorageSync('user')
+    const login = app.globalData.login || (userInfo ? true : false)
+    this.setData({
+      userInfo: userInfo || this.data.userInfo,
+      login: login
+    })
   },
 
   /**

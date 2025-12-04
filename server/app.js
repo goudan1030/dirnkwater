@@ -18,11 +18,15 @@ app.use(bodyParser.urlencoded({ extended: true }))
 const authRoutes = require('./routes/auth')
 const userRoutes = require('./routes/user')
 const waterRoutes = require('./routes/water')
+const subscribeRoutes = require('./routes/subscribe')
+const alarmRoutes = require('./routes/alarm')
 
 // 路由
 app.use('/api/auth', authRoutes)
 app.use('/api/user', userRoutes)
 app.use('/api/water', waterRoutes)
+app.use('/api/subscribe', subscribeRoutes)
+app.use('/api/alarm', alarmRoutes)
 
 // 健康检查
 app.get('/health', (req, res) => {
@@ -39,9 +43,15 @@ app.use((err, req, res, next) => {
   })
 })
 
-const PORT = process.env.PORT || 3000
+// 启动定时任务调度器
+const scheduler = require('./utils/scheduler')
+
+const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`服务器运行在端口 ${PORT}`)
   console.log(`健康检查: http://localhost:${PORT}/health`)
+  
+  // 启动闹钟定时任务
+  scheduler.start()
 })
 

@@ -1,18 +1,18 @@
 <view class="page">
   <!-- 返回按钮 -->
-  <navigator url="/pages/index/index"  hover-class="navigator-hover" >
+  <view class="back-wrapper" catchtap="goBack">
     <image src="/static/back.png" class="back"></image>
-  </navigator>
+  </view>
   <!-- 返回结束 -->
   <!-- 登录框开始 -->
-  <view class="logoin" wx:if="{{canIUseGetUserProfile}}" bindtap="getUserProfile">
-    <view class="avtor">
+  <view class="logoin" wx:if="{{canIUseGetUserProfile}}">
+    <view class="avtor" catchtap="{{login==false ? 'getUserProfile' : 'goToProfile'}}">
       <image wx:if="{{login==true}}" src="{{userInfo.avatarUrl}}" class="user"></image>
       <image wx:elif="{{login==false}}" src="/static/user2.png" class="user"></image>
     </view>
-    <view wx:if="{{login==true}}"  class="title">{{userInfo.nickName}},你好呀</view>
-    <view wx:if="{{login==false}}"  class="title">立即登录</view>
-    
+    <view wx:if="{{login==true}}"  class="title" catchtap="goToProfile">{{userInfo.nickName}},你好呀</view>
+    <view wx:if="{{login==false}}"  class="title" catchtap="getUserProfile">立即登录</view>
+    <view wx:if="{{login==true}}" class="logout-btn" catchtap="logout">退出登录</view>
   </view>
   <!-- 登录框结束 -->
 <!-- <button bindtap="sendSubscribeMessage">下发通知测试</button> -->
@@ -27,13 +27,22 @@
       </view>
     </view>
   </view>
-  <!-- 模板消息提醒开始-->
-  <view class="notic">
-    <text class="n-title">开启消息提醒</text>
-    <text class="n-info">由于微信限制，小助手需要手动开启权限才能进行进行提醒，点击下方打开通知吧～</text>
-    <button class="n-btn" bindtap="sub">打开通知</button>
+  <!-- 闹钟管理 -->
+  <view class="alarm-box" bindtap="goToAlarm">
+    <view class="alarm-icon">⏰</view>
+    <view class="alarm-content">
+      <view class="alarm-title">闹钟管理</view>
+      <view class="alarm-desc">设置喝水提醒时间</view>
+    </view>
+    <text class="alarm-arrow">></text>
   </view>
-  <!-- 模板消息提醒结束-->
+  <!-- 订阅消息提醒开始-->
+  <view class="notic">
+    <text class="n-title">开启订阅消息</text>
+    <text class="n-info">开启订阅消息后，小助手会在设置的闹钟时间通过订阅消息提醒您喝水，点击下方按钮开启吧～</text>
+    <button class="n-btn" bindtap="sub">开启订阅消息</button>
+  </view>
+  <!-- 订阅消息提醒结束-->
   <!-- 其他小程序推荐 -->
   <!-- 第一个 -->
   <navigator class="box" target="miniProgram" open-type="navigate" app-id="wx6fad790baeddcc21" version="trial">

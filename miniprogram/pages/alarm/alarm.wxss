@@ -1,0 +1,283 @@
+.page {
+  z-index: 1;
+  background-color: rgba(244,245,249,1);
+  min-height: 100vh;
+}
+
+/* 自定义导航栏 */
+.custom-navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 88rpx;
+  background-color: #F6F6F6;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 30rpx;
+  padding-right: 30rpx;
+  z-index: 1000;
+  box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.04);
+}
+
+.back-wrapper {
+  width: 60rpx;
+  height: 60rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.back {
+  width: 18rpx;
+  height: 36rpx;
+}
+
+.navbar-title {
+  font-size: 36rpx;
+  font-weight: 500;
+  color: rgba(0,0,0,0.9);
+  flex: 1;
+  text-align: center;
+  margin-right: 60rpx;
+}
+
+.navbar-right {
+  width: 60rpx;
+}
+
+/* 闹钟容器 */
+.alarm-container {
+  padding: 40rpx 30rpx 160rpx;
+}
+
+/* 闹钟列表 */
+.alarm-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.alarm-item {
+  background-image: linear-gradient(#F3F5F8, #fff);
+  border-radius: 12rpx;
+  border: 2px solid rgba(255,255,255,1);
+  box-shadow: 8px 8px 20px 0px rgba(55,99,170,0.1), -8px -8px 20px 0px #fff;
+  padding: 40rpx 30rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.alarm-content {
+  flex: 1;
+}
+
+.alarm-time {
+  font-size: 48rpx;
+  font-weight: 600;
+  color: rgba(99,128,179,1);
+  line-height: 68rpx;
+  margin-bottom: 10rpx;
+}
+
+.alarm-repeat {
+  font-size: 26rpx;
+  color: rgba(152,163,183,1);
+  line-height: 36rpx;
+}
+
+.alarm-switch {
+  transform: scale(1.2);
+}
+
+/* 空状态 */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 200rpx 0;
+}
+
+.empty-text {
+  font-size: 32rpx;
+  color: rgba(152,163,183,1);
+  margin-bottom: 20rpx;
+}
+
+.empty-desc {
+  font-size: 26rpx;
+  color: rgba(152,163,183,0.6);
+}
+
+/* 弹窗样式 */
+.modal-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0,0,0,0.5);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  width: 630rpx;
+  background-color: #fff;
+  border-radius: 24rpx;
+  overflow: hidden;
+}
+
+.modal-header {
+  padding: 40rpx 30rpx;
+  border-bottom: 1px solid rgba(0,0,0,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modal-title {
+  font-size: 36rpx;
+  font-weight: 600;
+  color: rgba(0,0,0,0.9);
+}
+
+.modal-close {
+  font-size: 40rpx;
+  color: rgba(152,163,183,1);
+  width: 60rpx;
+  height: 60rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-body {
+  padding: 40rpx 30rpx;
+}
+
+.form-item {
+  margin-bottom: 40rpx;
+}
+
+.form-item:last-child {
+  margin-bottom: 0;
+}
+
+.form-label {
+  font-size: 28rpx;
+  color: rgba(152,163,183,1);
+  display: block;
+  margin-bottom: 20rpx;
+}
+
+.picker-view {
+  background-color: rgba(244,245,249,1);
+  border-radius: 8rpx;
+  padding: 24rpx 30rpx;
+  font-size: 32rpx;
+  color: rgba(0,0,0,0.9);
+}
+
+.repeat-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20rpx;
+}
+
+.repeat-option {
+  padding: 16rpx 32rpx;
+  background-color: rgba(244,245,249,1);
+  border-radius: 40rpx;
+  font-size: 28rpx;
+  color: rgba(152,163,183,1);
+  border: 2px solid transparent;
+}
+
+.repeat-option.selected {
+  background-color: rgba(234,110,105,0.1);
+  color: rgba(234,110,105,1);
+  border-color: rgba(234,110,105,1);
+}
+
+.form-input {
+  background-color: rgba(244,245,249,1);
+  border-radius: 8rpx;
+  padding: 24rpx 30rpx;
+  font-size: 32rpx;
+  color: rgba(0,0,0,0.9);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.modal-footer {
+  padding: 30rpx;
+  border-top: 1px solid rgba(0,0,0,0.1);
+  display: flex;
+  gap: 20rpx;
+}
+
+.modal-btn {
+  flex: 1;
+  height: 88rpx;
+  border-radius: 44rpx;
+  font-size: 32rpx;
+  font-weight: 600;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-btn::after {
+  border: none;
+}
+
+.cancel-btn {
+  background-color: rgba(244,245,249,1);
+  color: rgba(152,163,183,1);
+}
+
+.confirm-btn {
+  background-color: rgba(234,110,105,1);
+  color: #fff;
+  box-shadow: 0px 4px 12px 0px rgba(243,188,186,1);
+}
+
+.confirm-btn:active {
+  opacity: 0.8;
+}
+
+/* 悬浮添加按钮 */
+.fab {
+  position: fixed;
+  right: 30rpx;
+  bottom: 40rpx;
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 50%;
+  background-color: rgba(234,110,105,1);
+  box-shadow: 0px 8px 24px 0px rgba(243,188,186,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.fab:active {
+  opacity: 0.8;
+  transform: scale(0.95);
+}
+
+.fab-icon {
+  font-size: 64rpx;
+  color: #fff;
+  font-weight: 300;
+  line-height: 1;
+}
+

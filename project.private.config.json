@@ -3,7 +3,7 @@
     "urlCheck": true,
     "coverView": true,
     "lazyloadPlaceholderEnable": false,
-    "skylineRenderEnable": false,
+    "skylineRenderEnable": true,
     "preloadBackgroundData": false,
     "autoAudits": false,
     "useApiHook": true,
@@ -18,6 +18,6 @@
     "useIsolateContext": true
   },
   "condition": {},
-  "libVersion": "3.12.0",
+  "libVersion": "3.11.3",
   "projectname": "dirnkwater"
 }

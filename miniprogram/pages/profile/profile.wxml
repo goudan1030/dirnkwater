@@ -1,0 +1,54 @@
+<view class="page">
+  <!-- 自定义导航栏 -->
+  <view class="custom-navbar" style="padding-top: {{statusBarHeight}}px;">
+    <view class="back-wrapper" catchtap="goBack">
+      <image src="/static/back.png" class="back"></image>
+    </view>
+    <text class="navbar-title">资料完善</text>
+    <view class="navbar-right"></view>
+  </view>
+  
+  <!-- 资料完善区域 -->
+  <view class="profile-container" style="margin-top: {{navBarHeight}}px;">
+    <!-- 头像选择区域 -->
+    <view class="avatar-section">
+      <text class="section-title">头像</text>
+      <button class="avatar-wrapper" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
+        <view class="avatar-box">
+          <image class="avatar" src="{{avatarUrl}}" mode="aspectFill"></image>
+          <view class="avatar-mask">
+            <text class="avatar-tip">点击更换</text>
+          </view>
+        </view>
+      </button>
+      <text class="section-desc">点击头像可以选择新头像</text>
+    </view>
+
+    <!-- 昵称填写区域 -->
+    <view class="nickname-section">
+      <text class="section-title">昵称</text>
+      <view class="input-wrapper">
+        <input 
+          type="nickname" 
+          class="nickname-input" 
+          placeholder="请输入昵称"
+          value="{{nickName}}"
+          bindinput="onNickNameInput"
+          bindblur="onNickNameBlur"
+          maxlength="20"
+        />
+        <text class="input-count">{{nickName.length}}/20</text>
+      </view>
+      <text class="section-desc">支持使用微信昵称，最多20个字符</text>
+    </view>
+  </view>
+
+  <!-- 保存按钮 -->
+  <view class="save-section">
+    <button class="save-btn" bindtap="saveProfile" disabled="{{isSaving}}">
+      <text wx:if="{{!isSaving}}">保存</text>
+      <text wx:else>保存中...</text>
+    </button>
+  </view>
+</view>
+

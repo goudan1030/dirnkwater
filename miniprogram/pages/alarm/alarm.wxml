@@ -1,0 +1,106 @@
+<view class="page">
+  <!-- 自定义导航栏 -->
+  <view class="custom-navbar" style="padding-top: {{statusBarHeight}}px;">
+    <view class="back-wrapper" catchtap="goBack">
+      <image src="/static/back.png" class="back"></image>
+    </view>
+    <text class="navbar-title">闹钟管理</text>
+    <view class="navbar-right"></view>
+  </view>
+  
+  <!-- 闹钟列表 -->
+  <view class="alarm-container" style="margin-top: {{navBarHeight}}px;">
+    <!-- 闹钟列表 -->
+    <view wx:if="{{alarmList.length > 0}}" class="alarm-list">
+      <view 
+        class="alarm-item" 
+        wx:for="{{alarmList}}" 
+        wx:key="id"
+        bindtap="editAlarm"
+        bindlongpress="deleteAlarm"
+        data-index="{{index}}"
+      >
+        <view class="alarm-content">
+          <view class="alarm-time">{{item.time}}</view>
+          <view class="alarm-repeat">{{item.repeatText}}</view>
+        </view>
+        <switch 
+          class="alarm-switch" 
+          checked="{{item.enabled}}" 
+          bindchange="toggleAlarm"
+          data-index="{{index}}"
+          color="rgba(234,110,105,1)"
+        />
+      </view>
+    </view>
+    
+    <!-- 空状态 -->
+    <view wx:else class="empty-state">
+      <text class="empty-text">还没有设置闹钟</text>
+      <text class="empty-desc">点击底部按钮添加闹钟</text>
+    </view>
+  </view>
+  
+  <!-- 悬浮添加按钮 -->
+  <view class="fab" bindtap="addAlarm">
+    <text class="fab-icon">+</text>
+  </view>
+</view>
+
+<!-- 添加/编辑闹钟弹窗 -->
+<view class="modal-mask" wx:if="{{showModal}}" bindtap="closeModal">
+  <view class="modal-content" catchtap="stopPropagation">
+    <view class="modal-header">
+      <text class="modal-title">{{isEdit ? '编辑闹钟' : '添加闹钟'}}</text>
+      <text class="modal-close" catchtap="closeModal">✕</text>
+    </view>
+    
+    <view class="modal-body">
+      <!-- 时间选择 -->
+      <view class="form-item">
+        <text class="form-label">提醒时间</text>
+        <picker 
+          mode="time" 
+          value="{{currentTime}}" 
+          bindchange="onTimeChange"
+        >
+          <view class="picker-view">{{currentTime || '请选择时间'}}</view>
+        </picker>
+      </view>
+      
+      <!-- 重复设置 -->
+      <view class="form-item">
+        <text class="form-label">重复</text>
+        <view class="repeat-options">
+          <view 
+            class="repeat-option {{item.selected ? 'selected' : ''}}"
+            wx:for="{{repeatOptions}}"
+            wx:key="value"
+            bindtap="selectRepeat"
+            data-value="{{item.value}}"
+          >
+            {{item.label}}
+          </view>
+        </view>
+      </view>
+      
+      <!-- 提示语 -->
+      <view class="form-item">
+        <text class="form-label">提醒内容</text>
+        <input 
+          class="form-input" 
+          placeholder="请输入提醒内容（选填）"
+          value="{{currentMessage}}"
+          bindinput="onMessageInput"
+          maxlength="20"
+        />
+      </view>
+    </view>
+    
+    <view class="modal-footer">
+      <button class="modal-btn cancel-btn" catchtap="closeModal">取消</button>
+      <button class="modal-btn confirm-btn" catchtap="saveAlarm">保存</button>
+    </view>
+  </view>
+</view>
+

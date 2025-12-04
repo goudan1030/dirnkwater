@@ -12,7 +12,17 @@ module.exports = {
     // 增加喝水记录
     addWater: '/water/add',
     // 清空当天喝水量
-    clearWater: '/water/clear'
+    clearWater: '/water/clear',
+    // 订阅消息相关
+    subscribeAdd: '/subscribe/add',
+    subscribeSend: '/subscribe/send',
+    subscribeSendAlarm: '/subscribe/send-alarm',
+    // 闹钟相关
+    alarmList: '/alarm/list',
+    alarmSync: '/alarm/sync',
+    alarmAdd: '/alarm/add',
+    alarmUpdate: '/alarm/update',
+    alarmDelete: '/alarm/delete'
   }
 }
 
