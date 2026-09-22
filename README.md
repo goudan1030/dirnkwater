@@ -6,6 +6,33 @@
 
 更多好玩有趣的开源小程序，欢迎来我的网站：https://www.minifans.cn/
 
+## iOS App：小熊喝水
+
+除了微信小程序，我们也为 Apple 设备开发了独立的原生 App「小熊喝水」。它面向希望获得更完整提醒体验的用户，可在 iPhone 和 iPad 上使用，并提供 Apple Watch App、表盘复杂功能以及主屏幕和锁屏小组件。
+
+**主要能力**
+
+- 根据身体信息估算每日饮水目标，并灵活设置提醒间隔和时间
+- 记录每次饮水，查看每日进度、连续打卡、历史记录与近 7 天统计
+- 可选择 App、类别或网站，在提醒时暂时锁定，完成喝水确认后恢复使用（Pro）
+- 支持前置摄像头识别喝水动作，也可以手动确认
+- Apple Watch 抬腕查看进度、一键记一杯，支持离线记录后同步
+- 摄像头识别仅在设备本地进行，画面不会上传或保存
+
+<p align="center">
+  <img src="docs/app/04-home.jpg" alt="小熊喝水首页与饮水进度" width="19%" />
+  <img src="docs/app/02-stats.jpg" alt="小熊喝水统计与历史" width="19%" />
+  <img src="docs/app/03-camera.jpg" alt="小熊喝水本地摄像头识别说明" width="19%" />
+  <img src="docs/app/05-onboarding.jpg" alt="小熊喝水个性化设置" width="19%" />
+  <img src="docs/app/01-profile.jpg" alt="小熊喝水饮水目标设置" width="19%" />
+</p>
+
+### App Store 下载
+
+[在 App Store 查看并下载「小熊喝水」](https://apps.apple.com/cn/app/id6795596548)
+
+> iOS App 是独立的 Apple 平台产品，并非本仓库微信小程序代码的 iOS 构建版本。
+
 ## 功能特性
 
 ✨ **核心功能**
